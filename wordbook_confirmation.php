@@ -23,6 +23,7 @@ try{
 }catch (PDOException $Exception){
     print "error:" .$Exception->getMessage();
 }
+//一覧表を表示する際にユーザー個人での変更を反映させるためにsessionの情報を作る
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -36,33 +37,13 @@ try{
             <h2>用語管理</h2>
         </header>
         <main>
-            <form name="textSetting">
-                <?php
-                $str = "章：<input type=\"text\"";
-                if($_GET['action'] == 'add'){
-                    $str .= "value=\"" .$_GET['section']. "\">  節：<input type=\"text\"><br>";
-                    $str .= "登録する用語<input type=\"text\"><br>";
-                    //textareaの大きさ調整忘れずに
-                    $str .= "用語に対する解説<input type\"textarea\"><br>";
-                }else if($_GET['action' == 'edit']){
-                    try{
-                        $sql = "SELECT * FROM sample WHERE id = :id";
-                        $stmh = $pdo->prepare($sql);
-                        $stmh->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-                        $stmh->execute();
-                    }catch (PDOException $Exception){
-                        print "error:" .$Exception->getMessage();
-                    }
-                    $row = $stmh->fetch(PDO::FETCH_ASSOC);
-                    $str .= "value=\"" .$_GET['section']. "\">  節：<input type=\"text\"><br>";
-                    $str .= "用語<input type=\"text\"><br>";
-                    //textareaの大きさ調整忘れずに
-                    $str .= "用語に対する解説<input type\"textarea\"><br>";
-                }
-                ?>
+            <form name="confirmForAll" method="git">
+                <input type="checkbox" name="yesno[]" value="yes">この修正を全体に反映させるために管理人に知らせますか?
             </form>
-            <a href="wordbook_list.php">戻る</a>
-            <a href="wordbook_confirmation.php">保存</a>
+<!-- 戻るボタンにはsesstionの情報をのせる必要があるのか要検討 -->
+            <a href="wordbook_manage.php">戻る</a>
+<!-- 下記リンクでcheckboxの内容をget形式で送る -->
+            <a href="wordbook_confirmation.php?">保存</a>
         </main>
         <footer></footer>
     </body>

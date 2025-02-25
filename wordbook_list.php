@@ -23,6 +23,10 @@ try{
 }catch (PDOException $Exception){
     print "error:" .$Exception->getMessage();
 }
+//一覧表を表示する際にユーザー個人での変更を反映させるためにsessionの情報を作る
+
+//wordbook_confirmation.phpからメール送るかが来るからそれを見て必要ならメール出す
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -48,6 +52,8 @@ try{
         <main>
             <?php
             //一覧表を作成
+            //後で プリセットの機能を追加
+            
             $chapterNum = 1;
             do{
                 try{

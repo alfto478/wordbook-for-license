@@ -23,6 +23,7 @@ try{
 }catch (PDOException $Exception){
     print "error:" .$Exception->getMessage();
 }
+//一覧表を表示する際にユーザー個人での変更を反映させるためにsessionの情報を作る
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -50,8 +51,8 @@ try{
             //一覧表（管理版）を作成
             $chapterNum = 1;
             do{
+                $str = "<h4>第{$chapterNum}章 {$chapterName[$chapterNum-1]}</h4><br>";
                 try{
-                    $str = "<h4>第{$chapterNum}章 {$chapterName[$chapterNum-1]}</h4><br>";
                     $sql = "SELECT * FROM sample WHERE chapter = :chapterNum";
                     $stmh = $pdo->prepare($sql);
                     $stmh->bindValue(':chapterNum', $chapterNum, PDO::PARAM_INT);
@@ -63,10 +64,10 @@ try{
                 $str .= "<table border=\"2\">";
                 while($row = $stmh->fetch(PDO::FETCH_ASSOC)){
                     $str .= "<tr><td>". htmlspecialchars($row["id"], ENT_QUOTES). "</td><td>" .htmlspecialchars($row["chapter"], ENT_QUOTES). "章 - " .htmlspecialchars($row["section"], ENT_QUOTES). "節</td>
-                    <td rowspan=\"2\" width=\"55%\">" .htmlspecialchars($row["explanation"], ENT_QUOTES). "</td><td rowspan=\"2\" width=\"10%\"><a href=\"wordbook_set.php\">変更する</a></td></tr>";
+                    <td rowspan=\"2\" width=\"55%\">" .htmlspecialchars($row["explanation"], ENT_QUOTES). "</td><td rowspan=\"2\" width=\"10%\"><a href=\"wordbook_set.php?id=" .$row["id"]. "&action=\"edit\"\">変更する</a></td></tr>";
                     $str .= "<tr><td colspan=\"2\">" .htmlspecialchars($row["term"], ENT_QUOTES). "</td></tr>";
                 }
-                $str .= "</table><br><a href=\"wordbook_set.php\">項目を追加する</a><br><br>";
+                $str .= "<tr><td colspan=\"4\"><a href=\"wordbook_set.php?section=" .$chapterNum. "&action=\"add\"\">項目を追加する</a></td></tr></table><br><br>";
                 print $str;
             }while($chapterNum <= $maxChapterNum);
             ?>
