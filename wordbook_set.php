@@ -54,15 +54,19 @@ try{
                         print "error:" .$Exception->getMessage();
                     }
                     $row = $stmh->fetch(PDO::FETCH_ASSOC);
-                    $str .= "value=\"" .$_GET['section']. "\">  節：<input type=\"text\"><br>";
-                    $str .= "用語<input type=\"text\"><br>";
+                    $str .= "value=\"" .$row['section']. "\">  節：<input type=\"text\" value=\"" .$row['chapter']. "\"><br>";
+                    $str .= "用語<input type=\"text\" value=\"" .$row['word']. "\"><br>";
                     //textareaの大きさ調整忘れずに
-                    $str .= "用語に対する解説<input type\"textarea\"><br>";
+                    $str .= "用語に対する解説<input type\"textarea\" value=\"" .$row['explanation']. "\"><br>";
                 }
                 ?>
             </form>
             <a href="wordbook_list.php">戻る</a>
-            <a href="wordbook_confirmation.php">保存</a>
+            <?php
+            if($_GET['action'] == "edit") $word = "保存";
+            else if($_GET['action'] == "add") $word = "追加";
+            print "<a href=\"wordbook_confirmation.php\">" .$word. "</a>";
+            ?>
         </main>
         <footer></footer>
     </body>
