@@ -64,10 +64,10 @@ try{
                 $str .= "<table border=\"2\">";
                 while($row = $stmh->fetch(PDO::FETCH_ASSOC)){
                     $str .= "<tr><td>". htmlspecialchars($row["id"], ENT_QUOTES). "</td><td>" .htmlspecialchars($row["chapter"], ENT_QUOTES). "章 - " .htmlspecialchars($row["section"], ENT_QUOTES). "節</td>
-                    <td rowspan=\"2\" width=\"55%\">" .htmlspecialchars($row["explanation"], ENT_QUOTES). "</td><td rowspan=\"2\" width=\"10%\"><a href=\"wordbook_set.php?id=" .$row["id"]. "&action=\"edit\"\">変更する</a></td></tr>";
+                    <td rowspan=\"2\" width=\"55%\">" .htmlspecialchars($row["explanation"], ENT_QUOTES). "</td><td rowspan=\"2\" width=\"10%\"><a href=\"wordbook_set.php?id=" .$row["id"]. "&action=edit\">変更する</a></td></tr>";
                     $str .= "<tr><td colspan=\"2\">" .htmlspecialchars($row["term"], ENT_QUOTES). "</td></tr>";
                 }
-                $str .= "<tr><td colspan=\"4\"><a href=\"wordbook_set.php?section=" .$chapterNum. "&action=\"add\"\">項目を追加する</a></td></tr></table><br><br>";
+                $str .= "<tr><td colspan=\"4\"><a href=\"wordbook_set.php?section=" .$chapterNum. "&action=add\">項目を追加する</a></td></tr></table><br><br>";
                 print $str;
             }while($chapterNum <= $maxChapterNum);
             ?>

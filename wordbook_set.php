@@ -33,7 +33,7 @@ try{
     <body>
         <header>
             <h1>応用情報技術者 単語帳 アプリケーション</h1>
-            <h2>用語管理</h2>
+            <h2>用語管理・変更画面</h2>
         </header>
         <main>
             <form name="textSetting">
@@ -44,7 +44,7 @@ try{
                     $str .= "登録する用語<input type=\"text\"><br>";
                     //textareaの大きさ調整忘れずに
                     $str .= "用語に対する解説<input type\"textarea\"><br>";
-                }else if($_GET['action' == 'edit']){
+                }else if($_GET['action'] == 'edit'){
                     try{
                         $sql = "SELECT * FROM sample WHERE id = :id";
                         $stmh = $pdo->prepare($sql);
@@ -57,14 +57,15 @@ try{
                     $str .= "value=\"" .$row['section']. "\">  節：<input type=\"text\" value=\"" .$row['chapter']. "\"><br>";
                     $str .= "用語<input type=\"text\" value=\"" .$row['word']. "\"><br>";
                     //textareaの大きさ調整忘れずに
-                    $str .= "用語に対する解説<input type\"textarea\" value=\"" .$row['explanation']. "\"><br>";
+                    $str .= "用語に対する解説<br><textarea name=\"explanation\" cols=\"100\" rows=\"25\">" .$row['explanation']. "</textarea><br>";
                 }
+                print $str;
                 ?>
             </form>
-            <a href="wordbook_list.php">戻る</a>
+            <a href="wordbook_manage.php">戻る</a>
             <?php
-            if($_GET['action'] == "edit") $word = "保存";
-            else if($_GET['action'] == "add") $word = "追加";
+            if($_GET['action'] == 'edit') $word = "保存";
+            else if($_GET['action'] == 'add') $word = "追加";
             print "<a href=\"wordbook_confirmation.php\">" .$word. "</a>";
             ?>
         </main>

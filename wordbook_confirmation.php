@@ -34,16 +34,17 @@ try{
     <body>
         <header>
             <h1>応用情報技術者 単語帳 アプリケーション</h1>
-            <h2>用語管理</h2>
+            <h2>用語管理・変更確認画面</h2>
         </header>
         <main>
+<!-- 確認ように入力された内容を置く->用語の番号だけでおｋ -->
             <form name="confirmForAll" method="git">
                 <input type="checkbox" name="yesno[]" value="yes">この修正を全体に反映させるために管理人に知らせますか?
             </form>
 <!-- 戻るボタンにはsesstionの情報をのせる必要があるのか要検討 -->
             <a href="wordbook_manage.php">戻る</a>
 <!-- 下記リンクでcheckboxの内容をget形式で送る -->
-            <a href="wordbook_confirmation.php?">保存</a>
+            <a href="wordbook_list.php">保存</a>
         </main>
         <footer></footer>
     </body>
