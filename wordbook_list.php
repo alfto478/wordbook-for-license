@@ -1,4 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>応用情報技術者用単語帳</title>
+    </head>
 <?php
+session_start();
+if(isset($_SESSION['userid'])){
+?>
+    <body>
+        エラーが発生しました下のリンクからログイン画面に戻っていください<br>
+        <a href="wordbook_login.php">ログイン画面に戻る</a>
+    </body>
+<?php
+}else{
 //dbに接続
 //権限の付与に戸惑った
 require_once "/home/alfto/worddb_create.php";
@@ -8,13 +23,13 @@ $chapterName = ["基礎理論", "コンピュータ構成要素", "システム�
 "ソフトウェア開発管理技術", "マネジメント", "ストラテジ"];
 try{
     //dbの名前はあとで変える
-    $sql = "SELECT chapter FROM sample ORDER BY chapter DESC LIMIT 1";
+    $sql = "SELECT chapter FROM worddb_main_table ORDER BY chapter DESC LIMIT 1";
     $stmh = $pdo->query($sql);
     $maxChapterNum = $stmh->fetch(PDO::FETCH_ASSOC)['chapter'];
     $stmh->closeCursor();
     $maxSectionNum = [];
     for($i = 1; $i <= $maxChapterNum; $i++){
-        $sql = "SELECT section FROM sample WHERE chapter = :chapterNum ORDER BY section DESC LIMIT 1";
+        $sql = "SELECT section FROM worddb_main_table WHERE chapter = :chapterNum ORDER BY section DESC LIMIT 1";
         $stmh = $pdo->prepare($sql);
         $stmh->bindValue(':chapterNum', $i, PDO::PARAM_INT);
         $maxSectionNum[$i-1] = $stmh->fetch(PDO::FETCH_ASSOC)['section1'];
@@ -23,17 +38,11 @@ try{
 }catch (PDOException $Exception){
     print "error:" .$Exception->getMessage();
 }
-//一覧表を表示する際にユーザー個人での変更を反映させるためにsessionの情報を作る
-
-//wordbook_confirmation.phpからメール送るかが来るからそれを見て必要ならメール出す
+//manegeでgetからactionがくる -> 悩み中
+//wordbook_confirmation.phpからメール送るかが来るからそれを見て必要ならメール出す -> 悩み中
+//あとcommitも -> 悩み中
 
 ?>
-<!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="utf-8">
-        <title>応用情報技術者用単語帳</title>
-    </head>
     <body>
         <header>
             <h1>応用情報技術者 単語帳 アプリケーション</h1>
@@ -58,29 +67,43 @@ try{
             do{
                 try{
                     $str = "<h4>第{$chapterNum}章 {$chapterName[$chapterNum-1]}</h4><br>";
-                    $sql = "SELECT * from sample WHERE chapter = :chapterNum";
+                    $sql = "SELECT * FROM worddb_main_table WHERE chapter = :chapterNum";
                     $stmh = $pdo->prepare($sql);
                     $stmh->bindValue(':chapterNum', $chapterNum, PDO::PARAM_INT);
                     $stmh->execute();
                 }catch (PDOException $Exception){
                     print "error:" .$Exception->getMessage();
                 }
-                $chapterNum++;
                 $str .= "<table border=\"2\">";
                 while($row = $stmh->fetch(PDO::FETCH_ASSOC)){
+                    try{
+                        $sql = "SELECT * FROM userinfo_table WHERE userid = :userid AND chapter = :chapter AND section = :section";
+                        $stmh_jm = $pdo->prepare($sql);
+                        $stmh_jm->bindValue(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+                        $stmh_jm->bindValue(':chapter', $stmh['chapter'], PDO::PARAM_INT);
+                        $stmh_jm->bindValue(':section', $stmh['section'], PDO::PARAM_INT);
+                        $stmh_jm->execute();
+                        if($stmh_jm->rowCount == 1) $row = $stmh_jm->fetch(PDO::FETCH_ASSOC);
+                    }catch (PDOException $Exception){
+                        print "error:" .$Exception->getMessage();
+                    }
                     $str .= "<tr><td>". htmlspecialchars($row["id"], ENT_QUOTES). "</td><td>" .htmlspecialchars($row["chapter"], ENT_QUOTES). "章 - " .htmlspecialchars($row["section"], ENT_QUOTES). "節</td><td rowspan=\"2\" width=\"65%\">" .htmlspecialchars($row["explanation"], ENT_QUOTES). "</td></tr>";
                     $str .= "<tr><td colspan=\"2\">" .htmlspecialchars($row["term"], ENT_QUOTES). "</td></tr>";
                 }
                 $str .= "</table><br><br>";
                 print $str;
+                $chapterNum++;
             }while($chapterNum <= $maxChapterNum);
             ?>
             <a href="wordbook_start.html">戻る</a>
             <?php
             //ハードがPCなら表示
-            if(!(preg_match('/iPhone|iPod|iPad/ui', $_SERVER['HTTP_USER_AGENT']) || preg_match('/Android/ui', $_SERVER['HTTP_USER_AGENT']))) print "<a href=\"wordbook_manage.php\">管理画面</a>";
+            if(!preg_match('/iPhone|iPod|iPad|Android/ui', $_SERVER['HTTP_USER_AGENT'])) print "<a href=\"wordbook_manage.php?status=manage\">管理画面</a>";
             ?>
         </main>
         <footer></footer>
     </body>
+<?php
+}
+?>
 </html>
